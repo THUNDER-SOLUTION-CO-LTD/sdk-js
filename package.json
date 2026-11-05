@@ -1,6 +1,6 @@
 {
     "name": "@thunder-solution/sdk",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "Official Thunder SDK for JavaScript and TypeScript: verify Thai bank and TrueMoney Wallet slips, generate payment QR codes and check webhook signatures.",
     "keywords": [
         "thunder",
