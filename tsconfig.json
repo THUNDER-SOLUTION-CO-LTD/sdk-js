@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "types": ["bun", "node"],
+        "paths": {
+            "@thunder-solution/sdk": ["./src/index.ts"]
+        }
+    },
+    "include": ["src", "test", "examples", "scripts"]
+}

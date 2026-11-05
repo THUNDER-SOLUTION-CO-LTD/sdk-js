@@ -1,0 +1,79 @@
+{
+    "name": "@thunder-solution/sdk",
+    "version": "0.0.0",
+    "description": "Official Thunder SDK for JavaScript and TypeScript: verify Thai bank and TrueMoney Wallet slips, generate payment QR codes and check webhook signatures.",
+    "keywords": [
+        "thunder",
+        "slip",
+        "slip-verification",
+        "promptpay",
+        "truemoney",
+        "thai-bank",
+        "qr-code",
+        "payment",
+        "sdk",
+        "typescript"
+    ],
+    "homepage": "https://github.com/THUNDER-SOLUTION-CO-LTD/sdk-js#readme",
+    "bugs": {
+        "url": "https://github.com/THUNDER-SOLUTION-CO-LTD/sdk-js/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/THUNDER-SOLUTION-CO-LTD/sdk-js.git"
+    },
+    "license": "MIT",
+    "author": "Thunder Solution Co., Ltd.",
+    "type": "module",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
+    "types": "./dist/cjs/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/esm/index.d.ts",
+                "default": "./dist/esm/index.js"
+            },
+            "require": {
+                "types": "./dist/cjs/index.d.ts",
+                "default": "./dist/cjs/index.js"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "README.th.md",
+        "CHANGELOG.md"
+    ],
+    "sideEffects": false,
+    "engines": {
+        "node": ">=22"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "scripts": {
+        "clean": "bun -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
+        "build": "bun run clean && bun run build:esm && bun run build:cjs",
+        "build:esm": "bun build src/index.ts --target=node --format=esm --outdir=dist/esm && tsc -p tsconfig.esm.json && bun -e \"fs.writeFileSync('dist/esm/package.json', JSON.stringify({ type: 'module' }))\"",
+        "build:cjs": "bun build src/index.ts --target=node --format=cjs --banner='\"use strict\";' --outdir=dist/cjs && tsc -p tsconfig.cjs.json && bun -e \"fs.writeFileSync('dist/cjs/package.json', JSON.stringify({ type: 'commonjs' }))\"",
+        "lint": "biome ci .",
+        "format": "biome format --write .",
+        "typecheck": "tsc -p tsconfig.json",
+        "test": "bun test test/unit test/conformance.test.ts test/readme.test.ts",
+        "test:coverage": "bun test --coverage test/unit test/conformance.test.ts test/readme.test.ts",
+        "test:integration": "bun test --timeout=180000 test/integration",
+        "check:package": "bun pm pack --dry-run && publint run --strict && bun pm pack --filename=check-package.tgz && attw check-package.tgz; status=$?; rm -f check-package.tgz; exit $status",
+        "prepack": "bun run build"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "0.18.5",
+        "@biomejs/biome": "2.6.4",
+        "@types/bun": "1.4.4",
+        "@types/node": "26.6.6",
+        "publint": "0.3.25",
+        "typescript": "7.0.2"
+    }
+}

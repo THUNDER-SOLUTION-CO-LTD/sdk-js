@@ -1,0 +1,454 @@
+{
+  "classes": {
+    "ApiError": {
+      "parent": "root",
+      "description": "Any HTTP error response. Carries status, code, message, requestId, rawBody, headers."
+    },
+    "AuthenticationError": {
+      "parent": "ApiError",
+      "description": "The API key is missing, malformed or unknown."
+    },
+    "PermissionDeniedError": {
+      "parent": "ApiError",
+      "description": "The key is valid but the account, branch or IP may not call this endpoint."
+    },
+    "QuotaExceededError": {
+      "parent": "PermissionDeniedError",
+      "description": "The service quota is used up. Nothing was charged."
+    },
+    "InvalidRequestError": {
+      "parent": "ApiError",
+      "description": "The API rejected the request body, query or parameters."
+    },
+    "InvalidImageError": {
+      "parent": "InvalidRequestError",
+      "description": "The image is missing, too large, not an image, or not a slip of the right kind."
+    },
+    "InvalidUrlError": {
+      "parent": "InvalidRequestError",
+      "description": "An image URL or callback URL was refused (protocol, private address, unreachable)."
+    },
+    "DuplicateSlipError": {
+      "parent": "InvalidRequestError",
+      "description": "v1 only. The slip was verified before; `slip` holds the parsed original slip."
+    },
+    "NotFoundError": {
+      "parent": "ApiError",
+      "description": "The resource (bank account, job, route) does not exist or is not visible to this branch."
+    },
+    "SlipNotFoundError": {
+      "parent": "NotFoundError",
+      "description": "The bank or wallet could not find the slip, or no QR code was found in the image."
+    },
+    "SlipPendingError": {
+      "parent": "NotFoundError",
+      "description": "Bangkok Bank slip from the last few minutes; try again later."
+    },
+    "ConflictError": {
+      "parent": "ApiError",
+      "description": "The request conflicts with existing data (duplicate bank account)."
+    },
+    "RateLimitError": {
+      "parent": "ApiError",
+      "description": "Too many requests. Carries retryAfter (seconds) when the API sends Retry-After."
+    },
+    "ServerError": {
+      "parent": "ApiError",
+      "description": "5xx from the API or an upstream bank service."
+    },
+    "ServiceUnavailableError": {
+      "parent": "ServerError",
+      "description": "503, a dependency is briefly unavailable. Usually sent with Retry-After."
+    },
+    "NetworkError": {
+      "parent": "root",
+      "description": "No HTTP response (DNS, connect, TLS, reset). Carries the underlying cause."
+    },
+    "RequestTimeoutError": {
+      "parent": "NetworkError",
+      "description": "The client-side timeout fired before a response arrived."
+    },
+    "InputError": {
+      "parent": "root",
+      "description": "Rejected by the SDK before sending. Has a `code` from inputErrorCodes."
+    },
+    "WebhookSignatureError": {
+      "parent": "root",
+      "description": "Webhook signature header missing, malformed or not matching the raw body."
+    },
+    "JobWaitTimeoutError": {
+      "parent": "root",
+      "description": "waitForJob gave up before the job finished. Carries the last polled job."
+    },
+    "BatchSubmitError": {
+      "parent": "root",
+      "description": "submitBankMany failed part way. Carries the batches already accepted and the cause."
+    }
+  },
+  "statusFallback": {
+    "400": "InvalidRequestError",
+    "401": "AuthenticationError",
+    "403": "PermissionDeniedError",
+    "404": "NotFoundError",
+    "409": "ConflictError",
+    "429": "RateLimitError",
+    "500": "ServerError",
+    "502": "ServerError",
+    "503": "ServiceUnavailableError",
+    "504": "ServerError"
+  },
+  "codes": {
+    "v2": {
+      "MISSING_API_KEY": {
+        "class": "AuthenticationError",
+        "status": 401,
+        "source": "live"
+      },
+      "INVALID_API_KEY": {
+        "class": "AuthenticationError",
+        "status": 401,
+        "source": "live"
+      },
+      "BRANCH_INACTIVE": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "SERVICE_BANNED": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "SERVICE_DELETED": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "docs"
+      },
+      "USER_BANNED": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "IP_NOT_ALLOWED": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "SERVICE_EXPIRED": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "QUOTA_EXCEEDED": {
+        "class": "QuotaExceededError",
+        "status": 403,
+        "source": "code"
+      },
+      "VALIDATION_ERROR": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "INVALID_BANK_CODE": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "INVALID_EXTRA_VERIFY": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "INVALID_MATCH_MODE": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "IMAGE_SIZE_TOO_LARGE": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "code"
+      },
+      "INVALID_IMAGE_FORMAT": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "code"
+      },
+      "INVALID_IMAGE_TYPE": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "docs"
+      },
+      "INVALID_IMAGE": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "live"
+      },
+      "INVALID_WALLET_QR": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "live"
+      },
+      "URL_PROTOCOL_NOT_ALLOWED": {
+        "class": "InvalidUrlError",
+        "status": 400,
+        "source": "live"
+      },
+      "URL_INVALID_IP_RANGE": {
+        "class": "InvalidUrlError",
+        "status": 400,
+        "source": "live"
+      },
+      "IMAGE_URL_UNREACHABLE": {
+        "class": "InvalidUrlError",
+        "status": 400,
+        "source": "code"
+      },
+      "INVALID_CALLBACK_URL": {
+        "class": "InvalidUrlError",
+        "status": 400,
+        "source": "live"
+      },
+      "SLIP_NOT_FOUND": {
+        "class": "SlipNotFoundError",
+        "status": 404,
+        "source": "live"
+      },
+      "SLIP_PENDING": {
+        "class": "SlipPendingError",
+        "status": 404,
+        "source": "code"
+      },
+      "BANK_ACCOUNT_NOT_FOUND": {
+        "class": "NotFoundError",
+        "status": 404,
+        "source": "live"
+      },
+      "JOB_NOT_FOUND": {
+        "class": "NotFoundError",
+        "status": 404,
+        "source": "live"
+      },
+      "NOT_FOUND": {
+        "class": "NotFoundError",
+        "status": 404,
+        "source": "live"
+      },
+      "BANK_ACCOUNT_DUPLICATE": {
+        "class": "ConflictError",
+        "status": 409,
+        "source": "live"
+      },
+      "RATE_LIMIT_EXCEEDED": {
+        "class": "RateLimitError",
+        "status": 429,
+        "source": "code"
+      },
+      "API_SERVER_ERROR": {
+        "class": "ServerError",
+        "status": 500,
+        "source": "code"
+      },
+      "INTERNAL_SERVER_ERROR": {
+        "class": "ServerError",
+        "status": 500,
+        "source": "code"
+      },
+      "RENEWAL_TEMPORARILY_UNAVAILABLE": {
+        "class": "ServiceUnavailableError",
+        "status": 503,
+        "source": "code"
+      },
+      "CALLBACK_UNAVAILABLE": {
+        "class": "ServiceUnavailableError",
+        "status": 503,
+        "source": "code"
+      }
+    },
+    "v1": {
+      "unauthorized": {
+        "class": "AuthenticationError",
+        "status": 401,
+        "source": "live"
+      },
+      "access_denied": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "account_not_verified": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "docs"
+      },
+      "application_expired": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "application_deactivated": {
+        "class": "PermissionDeniedError",
+        "status": 403,
+        "source": "code"
+      },
+      "quota_exceeded": {
+        "class": "QuotaExceededError",
+        "status": 403,
+        "source": "code"
+      },
+      "invalid_payload": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "invalid_check_duplicate": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "invalid_request": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "invalid_type": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "live"
+      },
+      "invalid_transaction_id": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_sender_name": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_receiver_name": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_receiver_phone": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_date": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_amount": {
+        "class": "InvalidRequestError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_image": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "live"
+      },
+      "invalid_wallet_qr": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "live"
+      },
+      "invalid_base64": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "docs"
+      },
+      "image_size_too_large": {
+        "class": "InvalidImageError",
+        "status": 400,
+        "source": "code"
+      },
+      "invalid_url": {
+        "class": "InvalidUrlError",
+        "status": 400,
+        "source": "live"
+      },
+      "url_unreachable": {
+        "class": "InvalidUrlError",
+        "status": 400,
+        "source": "docs"
+      },
+      "duplicate_slip": {
+        "class": "DuplicateSlipError",
+        "status": 400,
+        "source": "live"
+      },
+      "slip_not_found": {
+        "class": "SlipNotFoundError",
+        "status": 404,
+        "source": "code"
+      },
+      "qrcode_not_found": {
+        "class": "SlipNotFoundError",
+        "status": 404,
+        "source": "code"
+      },
+      "slip_pending": {
+        "class": "SlipPendingError",
+        "status": 404,
+        "source": "code"
+      },
+      "not_found": {
+        "class": "NotFoundError",
+        "status": 404,
+        "source": "live"
+      },
+      "rate_limit_exceeded": {
+        "class": "RateLimitError",
+        "status": 429,
+        "source": "code"
+      },
+      "server_error": {
+        "class": "ServerError",
+        "status": 500,
+        "source": "code"
+      },
+      "api_server_error": {
+        "class": "ServerError",
+        "status": 500,
+        "source": "code"
+      },
+      "renewal_temporarily_unavailable": {
+        "class": "ServiceUnavailableError",
+        "status": 503,
+        "source": "code"
+      }
+    }
+  },
+  "jobErrorCodes": [
+    "QUOTA_EXCEEDED",
+    "SERVICE_EXPIRED",
+    "BRANCH_INACTIVE",
+    "INVALID_API_KEY",
+    "USER_BANNED",
+    "SERVICE_BANNED",
+    "VALIDATION_ERROR",
+    "API_SERVER_ERROR",
+    "RENEWAL_TEMPORARILY_UNAVAILABLE",
+    "BILLING_CLAIM_EXPIRED",
+    "BILLING_DATE_UNVERIFIED",
+    "URL_PROTOCOL_NOT_ALLOWED",
+    "URL_INVALID_IP_RANGE",
+    "IMAGE_SIZE_TOO_LARGE",
+    "IMAGE_URL_UNREACHABLE",
+    "INVALID_IMAGE_FORMAT",
+    "INTERNAL_SERVER_ERROR"
+  ],
+  "inputErrorCodes": {
+    "FILE_TOO_LARGE": "File input is larger than maxImageBytes (4194304).",
+    "UNSUPPORTED_FILE_TYPE": "Sniffed type is not JPEG, PNG, GIF or WebP.",
+    "EMPTY_FILE": "File input has zero bytes.",
+    "FILE_NOT_READABLE": "A path input could not be opened.",
+    "BATCH_TOO_LARGE": "submitBankBatch got more than 100 slips (use submitBankMany).",
+    "EMPTY_BATCH": "submitBankBatch or submitBankMany got no slips.",
+    "INVALID_ARGUMENT": "Any other argument the SDK checks locally (empty payload, bad id, missing apiKey)."
+  }
+}

@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+# The fixtures are recorded API responses and must keep their exact bytes.
+test/fixtures/** -text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary

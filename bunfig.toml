@@ -1,0 +1,8 @@
+[run]
+# Scripts and the tools they start run on Bun, also when Node.js is installed.
+bun = true
+
+[test]
+coverageSkipTestFiles = true
+coveragePathIgnorePatterns = ["test/**"]
+coverageReporter = ["text", "lcov"]
